@@ -4,6 +4,7 @@ from app.rag import store_transaction, query_transactions
 from pydantic import BaseModel
 import joblib
 import os
+from app.pytorch_model import predict as pytorch_predict
 
 router = APIRouter()
 
@@ -75,3 +76,30 @@ class ChatInput(BaseModel):
 def chat(body: ChatInput):
     answer = query_transactions(body.question)
     return {"answer": answer}
+
+
+@router.post("/classify-pytorch", response_model=TransactionResponse)
+def classify_transaction_pytorch(transaction: TransactionInput):
+    try:
+        category, confidence = pytorch_predict(transaction.description)
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"PyTorch model error: {str(e)}"
+        )
+
+    result = {
+        "description": transaction.description,
+        "amount": transaction.amount,
+        "category": category,
+        "confidence": confidence
+    }
+
+    transactions_db.append(result)
+    store_transaction(
+        description=transaction.description,
+        amount=transaction.amount,
+        category=category
+    )
+
+    return result
