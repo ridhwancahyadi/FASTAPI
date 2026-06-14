@@ -1,0 +1,23 @@
+artifact_path: file:D:/Project Gabut/FastAPI/mlruns/2/models/m-d493318313844b29af6e7fb7c81e7823/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.3
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.9.0
+    skops_trusted_types: null
+mlflow_version: 3.13.0
+model_id: m-d493318313844b29af6e7fb7c81e7823
+model_size_bytes: 4737
+model_uuid: m-d493318313844b29af6e7fb7c81e7823
+prompts: null
+run_id: 245e7c0b8dbf4268a7fb9215006f6c39
+utc_time_created: '2026-06-14 08:06:16.267782'

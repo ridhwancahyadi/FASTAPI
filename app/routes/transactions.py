@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models import TransactionInput, TransactionResponse, SummaryResponse
+from app.rag import store_transaction, query_transactions
+from pydantic import BaseModel
 import joblib
 import os
 
@@ -33,6 +35,13 @@ def classify_transaction(transaction: TransactionInput):
     }
 
     transactions_db.append(result)
+
+    store_transaction(
+        description=transaction.description,
+        amount=transaction.amount,
+        category=category
+    )
+
     return result
 
 @router.get("/summary", response_model=SummaryResponse)
@@ -58,3 +67,11 @@ def get_summary():
 @router.get("/history")
 def get_history():
     return {"transactions": transactions_db}
+
+class ChatInput(BaseModel):
+    question: str
+
+@router.post("/chat")
+def chat(body: ChatInput):
+    answer = query_transactions(body.question)
+    return {"answer": answer}
