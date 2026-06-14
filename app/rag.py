@@ -15,15 +15,17 @@ openrouter = OpenAI(
     base_url="https://openrouter.ai/api/v1"
 )
 
-qdrant = QdrantClient(":memory:")
+qdrant = QdrantClient(path="./qdrant_storage")
 
-qdrant.create_collection(
-    collection_name=COLLECTION_NAME,
-    vectors_config=VectorParams(
-        size=EMBEDDING_DIM,
-        distance=Distance.COSINE
+existing = [c.name for c in qdrant.get_collections().collections]
+if COLLECTION_NAME not in existing:
+    qdrant.create_collection(
+        collection_name=COLLECTION_NAME,
+        vectors_config=VectorParams(
+            size=EMBEDDING_DIM,
+            distance=Distance.COSINE
+        )
     )
-)
 
 def get_embedding(text: str) -> list[float]:
     response = openrouter.embeddings.create(
