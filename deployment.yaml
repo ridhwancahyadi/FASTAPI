@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance-tracker
+  labels:
+    app: finance-tracker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: finance-tracker
+  template:
+    metadata:
+      labels:
+        app: finance-tracker
+    spec:
+      containers:
+      - name: finance-tracker
+        image: finance-tracker:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
